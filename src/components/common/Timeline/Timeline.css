@@ -1,0 +1,68 @@
+/* Set White Background */
+.timeline-wrapper {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid black;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Timeline Bar */
+.timeline-bar {
+  width: 90%;
+  position: relative;
+  padding: 10px 0;
+}
+
+/* Custom Slider with Two Handles */
+.custom-slider .MuiSlider-root {
+  color: #666;
+  height: 4px;
+}
+
+.custom-slider .MuiSlider-thumb {
+  width: 16px;
+  height: 16px;
+  background-color: #666;
+  border: 2px solid white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Highlighted Range */
+.custom-slider .MuiSlider-track {
+  height: 4px;
+  background-color: #999;
+}
+
+/* Time Labels */
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 5px;
+  color: #333;
+  width: 100%;
+}
+
+/* Control Buttons */
+.timeline-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.icon-btn {
+  color: #666;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  color: black;
+}

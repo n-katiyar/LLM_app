@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Co-pilot simulator</title>
+
+  <!-- Cytoscape core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.1/cytoscape.min.js"></script>
+
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #131113;
+      color: #fdf2ca;
+      display: flex;
+      flex-direction: column; /* Stack elements vertically */
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    /* Container for the graph and info box */
+    #main-container {
+      display: flex; /* Display graph and info box in the same row */
+      width: 100%;
+    }
+
+    /* Cytoscape Container */
+    #cytoscape-container {
+      flex: 2;
+      margin: 10px;
+      width: 70%;
+      height: 70vh;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      padding: 30px;
+    }
+
+    /* Info box positioned on the right */
+    #info-box {
+      flex: 1;
+      margin: 5px;
+      background-color: #1c1c1c;
+      color: #fdf2ca;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15%;
+      height: 80%;
+    }
+
+    #info-box2 {
+      flex: 1;
+      margin: 5px;
+      background-color: #1c1c1c;
+      color: #fdf2ca;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 50px;
+      height: 50%;
+    }
+
+    #info-box2 h3 {
+      margin: 0;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #f9b27b;
+    }
+
+    #info-box h3 {
+      margin: 0;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #f9b27b;
+    }
+
+    #info-content {
+      font-size: 14px;
+    }
+
+    /* Chatbox styles (optional) */
+    #chatbox {
+      position: fixed;
+      bottom: 80px; /* Appear above the "Chat" toggle button */
+      right: 20px;
+      background-color: #faebcc;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      width: 300px;
+      height: 400px;
+      z-index: 1000;
+    }
+
+    #chatbox-header {
+      background-color: #5c221b;
+      color: #faebcc;
+      padding: 10px;
+      text-align: center;
+      cursor: grab;
+    }
+
+    #chat-history {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      color: #000;
+    }
+
+    #chat-input-container {
+      display: flex;
+      padding: 10px;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #send-button {
+      background-color: #dc5341;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    #chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #f9b27b;
+      color: #2a1914;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    /* Context menu styles */
+    #node-context-menu {
+      position: absolute;
+      display: none;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+      z-index: 2000;
+      width: 150px;
+      padding: 5px;
+    }
+
+    #edge-context-menu {
+      position: absolute;
+      display: none;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+      z-index: 2000;
+      width: 150px;
+      padding: 5px;
+    }
+
+    #node-context-menu ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #node-context-menu li {
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    #node-context-menu li:hover {
+      background-color: #007BFF;
+    }
+
+    #edge-context-menu ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    #edge-context-menu li {
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    #edge-context-menu li:hover {
+      background-color: #007BFF;
+    }
+
+    #hover-tooltip {
+      display: none;
+      position: absolute;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      z-index: 50;
+    }
+
+    #next-step-btn {
+      position: sticky;
+      z-index:50;
+      padding: 10px;
+      background:#f9b27b;
+      color:#131113;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;"
+
+    }
+
+    #reset-view {
+    position:absolute; bottom:15px; left:15px; z-index:50;
+                 padding:10px 15px; background:#f9b27b; color:#131113; margin: 15px;
+                 border:none; border-radius:5px; cursor:pointer;
+    }
+
+
+
+  </style>
+</head>
+<body>
+  <h1>Co-pilot simulator</h1>
+
+  <!-- Main container: Graph and Info Box in the same row -->
+  <div id="main-container">
+    <div id="cytoscape-container">
+        <button id="reset-view">
+          Reset View
+        </button>
+
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; margin: 10px; ">
+
+      <!-- Info Box on the right side -->
+      <div id="info-box">
+        <h3>Element Details</h3>
+        <div id="info-content">
+          Click on a node or edge to see its details here.
+        </div>
+
+        <div id="tooltip-toggle-container" style="position:fixed; top:20px; right:20px; z-index:50;">
+          <label style="color:#fdf2ca;">
+            <input type="checkbox" id="tooltip-toggle" checked />
+            Hover info
+          </label>
+        </div>
+
+        <div id="drag-toggle-container" style="position:fixed; top:50px; right:20px; z-index:50;">
+          <label style="color:#fdf2ca;">
+            <input type="checkbox" id="drag-toggle" />
+            Move buses
+          </label>
+        </div>
+
+        <!-- Time Display Section -->
+        <div id="time-display" style="position:fixed; top:10px; left:20px; text-align: center; font-size: 18px; margin-top: 20px;">
+          Current Time: <span id="current-time">Loading...</span>
+            <script>
+                async function
+                fetchDateTime() {
+                        const response = await fetch('/simulation-actual-datetime');
+                        document.getElementById('current-time').innerText = await response.text();
+                }
+                window.onload = fetchDateTime
+            </script>
+        </div>
+      </div>
+
+      <div id="info-box2">
+        <h3>Simulation actions</h3>
+        <button id="next-step-btn" onclick="nextSimulationStep()">Next step</button>
+          <script>
+                async function
+                nextSimulationStep() {
+                        await fetch('/next-simulation-step');
+                        await fetchDateTime();
+                        updateAndFetchGraph();
+                }
+                window.onload = fetchDateTime
+            </script>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Chatbox -->
+  <button id="chat-toggle">Chat</button>
+  <div id="chatbox">
+    <div id="chatbox-header">Co-pilot</div>
+    <div id="chat-history"></div>
+    <div id="chat-input-container">
+      <input type="text" id="chat-input" placeholder="Type a message..." />
+      <button id="send-button">Send</button>
+    </div>
+  </div>
+
+  <!-- Minimal context menu -->
+  <div id="node-context-menu">
+    <ul>
+      <li id="investigate-option">Investigate</li>
+    </ul>
+  </div>
+
+    <!-- Minimal context menu -->
+  <div id="edge-context-menu">
+    <ul>
+      <li id="edge-investigate-option">Investigate</li>
+      <li id="edge-disconnect">Disconnect line</li>
+    </ul>
+  </div>
+
+
+  <!-- Tooltip element (initially hidden) -->
+  <div id="hover-tooltip" style="display:none; position:absolute; pointer-events:none;
+     background:rgba(0,0,0,0.8); color:#fff; padding:5px; border-radius:3px; font-size:12px; z-index:9000;"></div>
+
+  <script src="{{ url_for('static', filename='js/my_js.js') }}" ></script>
+
+</body>
+</html>
